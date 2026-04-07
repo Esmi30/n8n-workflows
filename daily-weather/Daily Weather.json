@@ -1,0 +1,134 @@
+{
+  "name": "Daily Weather",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "http://api.weatherapi.com/v1/current.json?key=34530dff828f4e9085753245261103&q=Manila",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "7413e2ae-50bf-4554-9cfc-ae89575c4546",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "cb1f4c7e-17a4-4e0b-96f5-b2e9bee9cfd0",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "fromEmail": "esmyriade@gmail.com",
+        "toEmail": "esmyriade@gmail.com",
+        "subject": "🌤️ Manila Weather Report",
+        "emailFormat": "text",
+        "text": "=Temperature: {{$json[\"current\"][\"temp_c\"]}}°C\nCondition: {{$json[\"current\"][\"condition\"][\"text\"]}}\nWind: {{$json[\"current\"][\"wind_kph\"]}} kph\nHumidity: {{$json[\"current\"][\"humidity\"]}}%\nTime: {{$json[\"location\"][\"localtime\"]}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        416,
+        0
+      ],
+      "id": "0c4e2e85-0f49-49cc-a738-935df5ba7193",
+      "name": "Send an Email",
+      "webhookId": "13037395-180f-4fe1-ab8c-7c7d93bd9214",
+      "credentials": {
+        "smtp": {
+          "id": "U8tuhEv7oRw35bYj",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "-5233300501",
+        "text": "=🌤️ Manila Weather Report  \nTemperature: {{$json[\"current\"][\"temp_c\"]}}°C \nCondition: {{$json[\"current\"][\"condition\"][\"text\"]}} \nWind: {{$json[\"current\"][\"wind_kph\"]}} kph \nHumidity: {{$json[\"current\"][\"humidity\"]}}% \nTime: {{ $('HTTP Request').item.json.location.localtime }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        624,
+        0
+      ],
+      "id": "bfb5ea14-69ae-45cd-9ffe-f608bbf325a1",
+      "name": "Send a text message",
+      "webhookId": "a2727b0c-30f6-4fd5-a7fe-aeeeda88d604",
+      "credentials": {
+        "telegramApi": {
+          "id": "ftJNE0MpfrpVpJIL",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Send an Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send an Email": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "70f441b9-663e-41b5-b167-dcd58ee090a1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "aadfa993540148b0c6e71e257ed781a4a2c4fc91b68bca2f56a6e1987b114bfa"
+  },
+  "id": "RxkcIGCUXRSd7aurMetjG",
+  "tags": []
+}
