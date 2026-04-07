@@ -1,0 +1,149 @@
+﻿{
+  "name": "Telegram Transcriptor: Voice to Text",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": ["message"],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0],
+      "id": "e561c902-d896-4e08-a310-b3be08f1b948",
+      "name": "Telegram Trigger",
+      "webhookId": "dec91b9b-f3e1-4667-97c9-edebf23c93d4",
+      "credentials": {
+        "telegramApi": {
+          "id": "YOUR_TELEGRAM_CREDENTIAL_ID",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "71c49534-dc44-4f16-b7f5-38725ccd2a7f",
+              "leftValue": "={{ $json.message.voice.file_id }}",
+              "rightValue": "",
+              "operator": { "type": "string", "operation": "exists", "singleValue": true }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [208, 0],
+      "id": "c6871b36-c0e7-47d9-852e-99a59b229603",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.telegram.org/botYOUR_TELEGRAM_BOT_TOKEN/getFile?file_id={{ $('Telegram Trigger').item.json.message.voice.file_id }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [432, -16],
+      "id": "c7b09049-3bfb-4339-a4c1-e1b2f2ef5b8d",
+      "name": "Get File Name"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.telegram.org/file/botYOUR_TELEGRAM_BOT_TOKEN/{{ $json.result.file_path }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [640, -16],
+      "id": "f0b08ee7-7940-4f16-9fce-d248ee7a8828",
+      "name": "Download the File"
+    },
+    {
+      "parameters": {
+        "jsCode": "const binaryData = $input.item.binary.data;\n\nbinaryData.fileName = 'voice.ogg';\nbinaryData.fileExtension = 'ogg';\nbinaryData.mimeType = 'audio/ogg';\n\nreturn {\n  json: $input.item.json,\n  binary: {\n    data: binaryData\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [848, -16],
+      "id": "35e770d2-fcf4-4006-85c6-01ca8bf9b332",
+      "name": "File conversion"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/audio/transcriptions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "groqApi",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "=data"
+            },
+            { "name": "model", "value": "whisper-large-v3-turbo" }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [1056, -16],
+      "id": "4a635ec1-ab82-4e8a-a36d-9a808417e012",
+      "name": "Transcript",
+      "credentials": {
+        "groqApi": {
+          "id": "YOUR_GROQ_CREDENTIAL_ID",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
+        "text": "=ðŸŽ™ï¸ {{ $json.text }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1264, -16],
+      "id": "57454e40-8b0e-485e-82eb-e845143709ef",
+      "name": "Send a text message",
+      "webhookId": "ce3c95c2-4620-4f3a-895c-4ee43fd1894e",
+      "credentials": {
+        "telegramApi": {
+          "id": "YOUR_TELEGRAM_CREDENTIAL_ID",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": { "main": [[{ "node": "If", "type": "main", "index": 0 }]] },
+    "If": { "main": [[{ "node": "Get File Name", "type": "main", "index": 0 }]] },
+    "Get File Name": { "main": [[{ "node": "Download the File", "type": "main", "index": 0 }]] },
+    "Download the File": { "main": [[{ "node": "File conversion", "type": "main", "index": 0 }]] },
+    "File conversion": { "main": [[{ "node": "Transcript", "type": "main", "index": 0 }]] },
+    "Transcript": { "main": [[{ "node": "Send a text message", "type": "main", "index": 0 }]] }
+  },
+  "active": true,
+  "settings": { "executionOrder": "v1", "binaryMode": "separate", "availableInMCP": false },
+  "versionId": "SAFE_VERSION",
+  "meta": { "templateCredsSetupCompleted": true, "instanceId": "SAFE_INSTANCE_ID" },
+  "id": "SAFE_WORKFLOW_ID",
+  "tags": []
+}
+
