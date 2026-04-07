@@ -1,0 +1,74 @@
+﻿{
+  "name": "RSS News Bot",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "feedUrl": "https://technology.inquirer.net/feed"
+      },
+      "type": "n8n-nodes-base.rssFeedReadTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "bec8fc3e-ec78-4368-afc2-0eb12185cdde",
+      "name": "RSS Feed Trigger"
+    },
+    {
+      "parameters": {
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
+        "text": "=ðŸ“° Inquirer Tech\n\n{{$json[\"title\"]}}\n\nðŸ”— Read more:\n{{$json[\"link\"]}}\n\nðŸ•’ {{$json[\"pubDate\"]}}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "07b35776-0563-4fd4-b17a-86fd3069bf11",
+      "name": "Send a text message",
+      "webhookId": "1f8e5409-55a0-4a1a-9782-1cc294192b36",
+      "credentials": {
+        "telegramApi": {
+          "id": "ftJNE0MpfrpVpJIL",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "RSS Feed Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "17f21bf7-319b-49aa-9e2d-aef5e16416cb",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "aadfa993540148b0c6e71e257ed781a4a2c4fc91b68bca2f56a6e1987b114bfa"
+  },
+  "id": "RgRuLvIcn5NOdsff7ApCO",
+  "tags": []
+}
