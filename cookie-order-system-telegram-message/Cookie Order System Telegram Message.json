@@ -1,0 +1,120 @@
+﻿{
+  "name": "Cinco Bakes Telegram Message",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_SPREADSHEET_ID",
+          "mode": "list",
+          "cachedResultName": "REDACTED",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_SPREADSHEET_ID/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1049348991,
+          "mode": "list",
+          "cachedResultName": "REDACTED",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_SPREADSHEET_ID/edit"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "9348033d-8f22-4068-b225-3b5d041d1c6c",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "AlcuLbTPGyXWYVei",
+          "name": "Cinco Bakes - Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
+        "text": "=ðŸª New Cinco Bakes Order!  \n\nName: {{ $json['Full Name'] }}\nEmail: {{ $json.Email }}\nTotal:  {{ $json['Total (â‚±)'] }}\nPayment: {{ $json['Mode of Payment'] }}\nDelivery Date: {{ $json['Date of Delivery'] }}\n\nFlavors : \n{{ $json.flavorsSummary }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        432,
+        0
+      ],
+      "id": "33423781-3781-46e6-926d-b5722264136c",
+      "name": "Send a text message",
+      "webhookId": "73b6467e-8a2c-446d-8aad-c8189f7d7828",
+      "credentials": {
+        "telegramApi": {
+          "id": "Pjgnk2jMjjwM24Ty",
+          "name": "Cinco Bakes Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get all keys in order\nconst keys = Object.keys($json);\n\n// Find where \"Date of Delivery\" is\nconst startIndex = keys.indexOf(\"Date of Delivery\");\n\nif (startIndex === -1) {\n  throw new Error(\"Date of Delivery column not found\");\n}\n\nlet result = [];\n\nfor (let i = startIndex + 1; i < keys.length; i++) {\n  const key = keys[i];\n  let value = $json[key];\n\n  // Convert to number just in case it's string\n  value = Number(value);\n\n  if (value && value > 0) {\n\n    const isAssorted = key.toLowerCase().includes(\"assorted\");\n\n    let emoji = isAssorted ? \"ðŸ“¦\" : \"ðŸª\";\n\n    let label;\n    if (isAssorted) {\n      label = value === 1 ? \"box\" : \"boxes\";\n    } else {\n      label = value === 1 ? \"pc\" : \"pcs\";\n    }\n\n    result.push(`${emoji} ${key} - ${value} ${label}`);\n  }\n}\n\nreturn {\n  json: {\n    ...$json,\n    flavorsSummary: result.length\n      ? result.join(\"\\n\")\n      : \"No items selected\"\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "fdd59dbf-8c23-4265-8397-afc2e1385014",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "8a86bbbb-4eb5-4397-a2b7-d2e6187a75db",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "aadfa993540148b0c6e71e257ed781a4a2c4fc91b68bca2f56a6e1987b114bfa"
+  },
+  "id": "UzcutUDW9bxIYFfR",
+  "tags": []
+}
