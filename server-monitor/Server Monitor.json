@@ -1,0 +1,133 @@
+{
+  "name": "Server Monitor",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "server-monitor",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "0e475e6c-2747-4bff-9bd7-b10170ce0170",
+      "name": "Webhook",
+      "webhookId": "32a3a1db-f341-4b6a-ac5c-a7bd89588ef2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "502c9ca9-a815-4c65-b57d-55d78ddd5693",
+              "leftValue": "={{ $json.body.cpu }}",
+              "rightValue": 80,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            },
+            {
+              "id": "474433c9-10fc-4227-86ab-cdaf15328e96",
+              "leftValue": "={{ $json.body.ram }}",
+              "rightValue": 80,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            },
+            {
+              "id": "18dcbeb6-1a25-48c5-b21a-4bcbcd196c8e",
+              "leftValue": "={{ $json.body.disk }}",
+              "rightValue": 90,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        208,
+        0
+      ],
+      "id": "814d6d38-8f60-4b05-b683-c1d9730566da",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "chatId": "-5233300501",
+        "text": "=🚨 Server Alert!\n\n🖥️ CPU: {{ $json.body.cpu }}%\n🧠 RAM: {{ $json.body.ram }}%\n💾 Disk: {{ $json.body.disk }}%\n🌡️ Temp: {{ $json.body.temp }}°C\n\n⚠️ One or more metrics exceeded threshold!",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        432,
+        -16
+      ],
+      "id": "7d5ecee8-608b-4e13-a52b-c40499b8845a",
+      "name": "Send a text message",
+      "webhookId": "52147f94-6b4f-4533-86a0-3ca63438da9a",
+      "credentials": {
+        "telegramApi": {
+          "id": "ftJNE0MpfrpVpJIL",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "e37e9f4a-85ed-4359-ad9b-4f9f0daa26b2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "aadfa993540148b0c6e71e257ed781a4a2c4fc91b68bca2f56a6e1987b114bfa"
+  },
+  "id": "FCTNMNISObizZ9Dz",
+  "tags": []
+}
