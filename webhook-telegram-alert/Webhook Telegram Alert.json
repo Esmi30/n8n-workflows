@@ -1,0 +1,69 @@
+{
+  "name": "Webhook Telegram Alert",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "telegram-test",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "3048480c-ca49-4bae-8446-831403a902c4",
+      "name": "Webhook",
+      "webhookId": "3015ca54-a482-4a63-93b7-aa622e2a19dc"
+    },
+    {
+      "parameters": {
+        "chatId": "-5233300501",
+        "text": "=Webhook triggered at {{$now}}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "daea799a-5cce-410a-8d56-0a26f527af00",
+      "name": "Send a text message",
+      "webhookId": "e4ddd4e8-cf02-4951-a777-6d36331a0cb2",
+      "credentials": {
+        "telegramApi": {
+          "id": "ftJNE0MpfrpVpJIL",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "df597ce8-1582-4227-8499-9cc4daa1131b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "aadfa993540148b0c6e71e257ed781a4a2c4fc91b68bca2f56a6e1987b114bfa"
+  },
+  "id": "DoW9v-mFwVHjAC7JK-31h",
+  "tags": []
+}
