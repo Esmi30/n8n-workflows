@@ -1,7 +1,7 @@
 
-# Cinco Bakes Weekly/Monthly Sales Report
+# Cookie Order System Weekly/Monthly Sales Report
 
-This n8n workflow generates weekly and monthly sales summaries for Cinco Bakes, then sends the reports by email and optionally by Telegram.
+This n8n workflow generates weekly and monthly sales summaries for Cookie Order System, then sends the reports by email and optionally by Telegram.
 
 It is useful for scheduled business reporting, bakery sales tracking, and lightweight management dashboards delivered through messaging tools.
 
@@ -57,7 +57,7 @@ Before using this workflow, make sure you have:
 
 ## Workflow Details
 
-- Workflow name: `Cinco Bakes Weekly/Monthly Sales Report`
+- Workflow name: `Cookie Order System Weekly/Monthly Sales Report`
 - Trigger type: `Schedule Trigger`
 - Data source: `Google Apps Script endpoint`
 - Delivery methods: `Gmail` and optional `Telegram`
